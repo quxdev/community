@@ -1,1 +1,1 @@
-default_app_config = 'newsfeed.apps.NewsfeedConfig'
+default_app_config = 'community.newsfeed.apps.NewsfeedConfig'

@@ -1,5 +1,16 @@
 {% extends 'newsfeed/_news.html' %}
 
 {% block news %}
-  {{ obj }}
+  <p>URL: <a href="{{ object.url }}">{{ object.url }}</a></p>
+  <p>Slug:
+    <a href="https://finmachines.io/{{ object.slug }}">
+      https://finmachines.io/{{ object.slug }}
+    </a>
+  </p>
+  <p>Named URL:
+    <a href="https://finmachines.io/{{ object.short_url }}">
+      https://finmachines.io/{{ object.short_url }}
+    </a>
+  </p>
+  <p>{{ object.description }}</p>
 {% endblock news %}

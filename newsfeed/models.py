@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import reverse
 
 from django.contrib.auth.models import User
 # from qux.utils.slop import get_random_string
@@ -30,6 +31,11 @@ class Newsitem(CoreModel):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        url = reverse('newsfeed:view', kwargs={'pk': self.id})
+        print(url)
+        return url
 
     def count_votes(self):
         self.votes = len(self.vote_set.all())

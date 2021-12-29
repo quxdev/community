@@ -1,13 +1,10 @@
 <div class="container-xl py-3 px-4 px-xl-0 d-none d-sm-block">
   <ul class="qux-subnav">
     <li class="qux-subnav qux-newsfeed">
-      <a href="#">New</a>
+      <a href="{% url 'newsfeed:list' %}">List</a>
     </li>
     <li class="qux-subnav qux-newsfeed">
-      <a href="#">Past</a>
-    </li>
-    <li class="qux-subnav qux-newsfeed">
-      <a href="#">Submit</a>
+      <a href="{% url 'newsfeed:new' %}">New</a>
     </li>
   </ul>
 </div>

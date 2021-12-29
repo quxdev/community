@@ -9,8 +9,8 @@
     {% autoescape off %}
       {% if title %}
         {{ title }}
-      {% elif obj %}
-          {% if obj.title %}{{ obj.title }}{% else %}Newsfeed{% endif %}
+      {% elif object %}
+          {% if object.title %}{{ object.title }}{% else %}Newsfeed{% endif %}
       {% endif %}
     {% endautoescape %}
     </h1>
