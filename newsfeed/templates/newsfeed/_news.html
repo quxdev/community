@@ -1,0 +1,22 @@
+{% extends '_blank.html' %}
+
+{% block qux_content %}
+{% include 'newsfeed/_newsfeed_navbar.html' %}
+
+<section id="news">
+  <div class="container-lg my-md-3">
+    <h1 class="my-3 my-md-4">
+    {% autoescape off %}
+      {% if title %}
+        {{ title }}
+      {% elif obj %}
+          {% if obj.title %}{{ obj.title }}{% else %}Newsfeed{% endif %}
+      {% endif %}
+    {% endautoescape %}
+    </h1>
+
+    {% block news %}
+    {% endblock %}
+  </div>
+</section>
+{% endblock %}

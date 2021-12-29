@@ -1,0 +1,45 @@
+{% extends 'newsfeed/_news.html' %}
+
+{% if user.is_superuser or object_list %}
+{% block news %}
+{% comment %}
+<div class="row">
+  <div class="col-12 col-lg">
+    <div class="form-group">
+      <form action="" method="get">
+        <label for="search" class="d-none">Search</label>
+        <input type="text" class="form-control foo-border" id="search"
+               name="search"
+               value="{{ request.GET.search }}">
+        <input type="submit" class="sr-only" tabindex="-1">
+      </form>
+    </div>
+  </div>
+  <div class="col-12 col-lg">
+    {% include 'pagination.html' %}
+  </div>
+</div>
+{% endcomment %}
+
+<div class="overflow-hidden rounded-table">
+{% if object_list %}
+<div class="card-group row mb-3">
+  {% for obj in object_list %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card quxidget-card h-100" style="background-color: #00000010 !important">
+        <div class="card-header bg-transparent border-0">
+          {{ obj.title }}
+        </div>
+        <div class="card-body py-0">
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          {{ obj.dtm_created|date:"d M, Y" }}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+</div>
+{% endblock %}
+{% endif %}
