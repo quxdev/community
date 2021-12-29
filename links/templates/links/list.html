@@ -1,0 +1,126 @@
+{% extends 'links/_link.html' %}
+
+{% block customstyle %}
+{{ block.super }}
+<style>
+.col-float {
+  width: calc(100% - 120px);
+}
+.col-fixed {
+  width: 120px;
+}
+#url:focus {
+  border-color: rgb(206, 212, 218);
+  box-shadow: none;
+}
+.newsitem-dropdown-menu {
+  font-size: 14px !important;
+}
+</style>
+{% endblock %}
+
+{% if user.is_superuser or object_list %}
+{% block news %}
+
+<section style="font-size: 0.875rem;">
+  <form method="post">
+    {% csrf_token %}
+    <label for="url" class="d-none">URL</label>
+    <div class="input-group mb-4">
+      <div class="input-group-prepend">
+  <span class="input-group-text" style="font-size: 1rem;">
+    <i class="bi bi-link"></i>
+  </span>
+      </div>
+      <input id="url" type="url" name="url" class="form-control">
+      <div class="input-group-append">
+        <button class="btn btn-secondary" type="submit" id="button-add">
+    <span style="font-size: 1rem;">
+      <i class="bi bi-plus"></i>
+    </span>
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+
+{% if object_list %}
+  <section style="font-size: 0.875rem;">
+    <ul class="fa-ul">
+      {% for obj in object_list %}
+        <li class="mb-3">
+          <span class="fa-li">
+          {% if obj.type == "article" %}
+            <i class="bi bi-newspaper"></i>
+          {% elif obj.type in "movie,episode,tvshow,other" %}
+            <i class="bi bi-youtube"></i>
+          {% else %}
+            <i class="bi bi-bookmark"></i>
+          {% endif %}
+          </span>
+
+          <div class="row no-gutters">
+            <div class="col-float">
+              <a href="{{ obj.url }}" target="_blank">{{ obj.title }}</a>
+              {% if obj.type == "article" %}
+                <br><span class="small">{{ obj.description }}</span>
+              {% endif %}
+              {% if obj.domain %}
+                <br><span class="small"><a href="https://{{ obj.domain }}/">{{ obj.domain }}</a></span>
+              {% endif %}
+              {% if obj.gettags %}
+                <br>
+                {% for tag in obj.gettags %}
+                  <a class="badge badge-pill badge-primary font-weight-light text-white text-uppercase"
+                     href="{% url 'links:tag' creator tag %}">
+                    {{ tag }}
+                  </a>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="col-fixed px-2" data-slug="{{ obj.slug }}">
+              <div class="dropdown">
+                <div id="menu_{{ obj.slug }}" class="pl-2 float-right"
+                      role="button" data-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-list"></i>
+                </div>
+                <div class="dropdown-menu newsitem-dropdown-menu dropdown-menu-right"
+                     aria-labelledby="menu_{{ obj.slug }}">
+                  {% if obj.creator == user %}
+                  <div class="dropdown-header">Manage</div>
+                  <a class="dropdown-item" href="{% url 'links:edit' obj.slug %}">Edit</a>
+                  <div class="dropdown-divider"></div>
+                  {% endif %}
+                  <div class="dropdown-header">Social</div>
+                  <a class="dropdown-item" target="_blank"
+                     href="https://api.whatsapp.com/send?text={{ request.scheme }}://{{ request.get_host }}{% url 'links:slug' obj.slug %}">WhatsApp</a>
+                  <a class="dropdown-item" target="_blank"
+                     href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'links:slug' obj.slug %}">Twitter</a>
+                  <a class="dropdown-item" href="#">LinkedIn</a>
+                </div>
+              </div>
+              <i class="bi bi-clipboard pl-2 float-right"
+                 data-toggle="tooltip" data-placement="left"
+                 title="Click to copy"
+                 onclick='CopyShortURL("{{ obj.slug }}")'></i>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}
+
+{% endblock %}
+{% endif %}
+
+{% block customjs %}
+{{ block.super }}
+<script>
+  function CopyShortURL(slug) {
+    let url = window.location.origin + "/" + slug + "/";
+    navigator.clipboard.writeText(url);
+  }
+</script>
+{% endblock %}

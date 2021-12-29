@@ -1,0 +1,32 @@
+{% extends 'links/_link.html' %}
+
+{% block news %}
+  <p>{{ object.description }}</p>
+  <p></p>
+  <div>
+    <ul style="padding-inline-start: 1rem;">
+      <li>URL: <a href="{{ object.url }}">{{ object.url }}</a></li>
+      <li>Short URL:
+        <a href="{{ request.scheme }}://{{ request.get_host }}/{{ object.slug }}">
+          {{ request.scheme }}://{{ request.get_host }}/{{ object.slug }}
+        </a>
+      </li>
+      <li>Named URL:
+        {% if object.short_url %}
+        <a href="{{ request.scheme }}://{{ request.get_host }}/{{ object.slug }}">
+          {{ request.scheme }}://{{ request.get_host }}/{{ object.short_url }}
+        </a>
+        {% else %}
+        None
+        {% endif %}
+      </li>
+      {% if object.gettags %}
+      <li>Tags:
+        {% for tag in object.gettags %}
+          <span class="badge badge-pill badge-primary text-uppercase font-weight-light">{{ tag }}</span>
+        {% endfor %}
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+{% endblock news %}

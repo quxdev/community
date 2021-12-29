@@ -1,0 +1,32 @@
+{% extends '_blank.html' %}
+
+{% block customstyle %}
+{{ block.super }}
+<style>
+  body { font-size: 0.875rem; }
+  h1 { font-size: 1.25rem; }
+</style>
+{% endblock customstyle %}
+
+{% block qux_content %}
+{% comment %}
+{% include 'links/_links_navbar.html' %}
+{% endcomment %}
+
+<section id="news">
+  <div class="container-lg px-lg-0 my-md-3">
+    <h1 class="my-3 my-md-4">
+    {% autoescape off %}
+      {% if title %}
+        {{ title }}
+      {% elif object and object.title %}
+        {{ object.title }}
+      {% endif %}
+    {% endautoescape %}
+    </h1>
+
+    {% block news %}
+    {% endblock %}
+  </div>
+</section>
+{% endblock %}
