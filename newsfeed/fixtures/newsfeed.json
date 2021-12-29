@@ -1,0 +1,50 @@
+[
+  {
+    "model": "qux_newsfeed.newsitem",
+    "pk": 1,
+    "fields": {
+      "dtm_created": "2021-12-27T09:58:47.393Z",
+      "dtm_updated": "2021-12-29T13:40:05.088Z",
+      "slug": "iWT8eSz3",
+      "title": "Qux.dev launches opensource suite of widgets",
+      "creator": 4,
+      "url": "https://github.com/quxdev/",
+      "description": "",
+      "short_url": "quxdev",
+      "votes": null,
+      "comments": null
+    }
+  },
+  {
+    "model": "qux_newsfeed.newsitem",
+    "pk": 2,
+    "fields": {
+      "dtm_created": "2021-12-27T09:58:47.394Z",
+      "dtm_updated": "2021-12-27T09:58:52.869Z",
+      "slug": "apRNMkvW",
+      "title": "Qux Core",
+      "creator": 8,
+      "url": "https://github.com/quxdev/qux/",
+      "description": "",
+      "short_url": "qux",
+      "votes": null,
+      "comments": null
+    }
+  },
+  {
+    "model": "qux_newsfeed.newsitem",
+    "pk": 3,
+    "fields": {
+      "dtm_created": "2021-12-29T16:20:27.974Z",
+      "dtm_updated": "2021-12-29T16:20:27.974Z",
+      "slug": "SD1SoNe7",
+      "title": "Qux Paymnents",
+      "creator": null,
+      "url": "https://github.com/quxdev/payments/",
+      "description": "",
+      "short_url": "qux_payments",
+      "votes": null,
+      "comments": null
+    }
+  }
+]
