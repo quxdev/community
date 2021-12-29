@@ -19,7 +19,7 @@ class Newsitem(CoreModel):
     description = models.TextField(
         verbose_name="Description", default=None, null=True, blank=True)
     short_url = models.CharField(
-        verbose_name="Short URL", max_length=16,
+        verbose_name="Short URL", max_length=8,
         unique=True, default=None, null=True, blank=True)
     votes = models.IntegerField(null=True)
     comments = models.IntegerField(null=True)
@@ -34,7 +34,6 @@ class Newsitem(CoreModel):
 
     def get_absolute_url(self):
         url = reverse('newsfeed:view', kwargs={'pk': self.id})
-        print(url)
         return url
 
     def count_votes(self):

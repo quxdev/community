@@ -74,9 +74,6 @@ class NewsItemEditView(SEOMixin, UpdateView):
                  '<span>Edit</span>'
     }
 
-    def get_success_url(self, *args, **kwargs):
-        return reverse('newsfeed:view', kwargs={'pk': self.pk})
-
 
 class NewsItemDeleteView(SEOMixin, DeleteView):
     model = Newsitem
