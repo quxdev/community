@@ -23,7 +23,7 @@
       "dtm_updated": "2021-12-27T09:58:52.869Z",
       "slug": "apRNMkvW",
       "title": "Qux Core",
-      "creator": 8,
+      "creator": 3,
       "url": "https://github.com/quxdev/qux/",
       "description": "",
       "short_url": "qux",
@@ -42,7 +42,7 @@
       "creator": null,
       "url": "https://github.com/quxdev/payments/",
       "description": "",
-      "short_url": "qux_payments",
+      "short_url": "payments",
       "votes": null,
       "comments": null
     }

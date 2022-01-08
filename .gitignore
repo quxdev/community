@@ -132,3 +132,13 @@ ENV/
 !.vscode/tasks.json 
 !.vscode/launch.json 
 !.vscode/extensions.json 
+
+#qux
+qux
+qux/
+shorturl/
+
+#project
+project
+project/
+manage.py

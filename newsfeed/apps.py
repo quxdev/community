@@ -2,6 +2,6 @@ from django.apps import AppConfig
 
 
 class NewsfeedConfig(AppConfig):
-    name = "community.newsfeed"
+    name = "newsfeed"
     label = "qux_newsfeed"
     verbose_name = "Qux Newsfeed"
