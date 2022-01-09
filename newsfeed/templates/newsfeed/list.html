@@ -1,45 +1,67 @@
 {% extends 'newsfeed/_news.html' %}
 
+{% block customstyle %}
+{{ block.super }}
+<style>
+.col-float {
+  width: calc(100% - 60px);
+}
+.col-fixed {
+  width: 60px;
+}
+#url:focus {
+  border-color: rgb(206, 212, 218);
+  box-shadow: none;
+}
+</style>
+{% endblock %}
+
 {% if user.is_superuser or object_list %}
 {% block news %}
-{% comment %}
-<div class="row">
-  <div class="col-12 col-lg">
-    <div class="form-group">
-      <form action="" method="get">
-        <label for="search" class="d-none">Search</label>
-        <input type="text" class="form-control foo-border" id="search"
-               name="search"
-               value="{{ request.GET.search }}">
-        <input type="submit" class="sr-only" tabindex="-1">
-      </form>
-    </div>
-  </div>
-  <div class="col-12 col-lg">
-    {% include 'pagination.html' %}
-  </div>
-</div>
-{% endcomment %}
 
-<div class="overflow-hidden rounded-table">
-{% if object_list %}
-<div class="card-group row mb-3">
-  {% for obj in object_list %}
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-      <div class="card quxidget-card h-100" style="background-color: #00000010 !important">
-        <div class="card-header bg-transparent border-0">
-          {{ obj.title }}
-        </div>
-        <div class="card-body py-0">
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          {{ obj.dtm_created|date:"d M, Y" }}
-        </div>
+<section style="font-size: 0.875rem;">
+  <form method="post">
+    {% csrf_token %}
+    <label for="url" class="d-none">URL</label>
+    <div class="input-group mb-4">
+      <div class="input-group-prepend">
+  <span class="input-group-text" style="font-size: 1rem;">
+    <i class="bi bi-link"></i>
+  </span>
+      </div>
+      <input id="url" type="url" name="url" class="form-control">
+      <div class="input-group-append">
+        <button class="btn btn-secondary" type="submit" id="button-add">
+    <span style="font-size: 1rem;">
+      <i class="bi bi-plus"></i>
+    </span>
+        </button>
       </div>
     </div>
-  {% endfor %}
-</div>
+  </form>
+</section>
+
+{% if object_list %}
+  <section style="font-size: 0.875rem;">
+    <ul class="fa-ul">
+      {% for obj in object_list %}
+        <li class="mb-3"><span class="fa-li"><i class="bi bi-bookmark"></i></span>
+          <div class="row no-gutters">
+            <div class="col-float">
+              <a href="{{ obj.url }}" target="_blank">{{ obj.title }}</a><br>
+              {% if obj.domain %}
+                <span class="small"><a href="https://{{ obj.domain }}/">{{ obj.domain }}</a></span>
+              {% endif %}
+            </div>
+            <div class="col-fixed px-2">
+              <i class="bi bi-clipboard float-right"></i>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
 {% endif %}
-</div>
+
 {% endblock %}
 {% endif %}
