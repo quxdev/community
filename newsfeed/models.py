@@ -21,7 +21,7 @@ class Newsitem(CoreModel):
         verbose_name="Domain", max_length=512, **default_null_blank
     )
     description = models.TextField(verbose_name="Description", **default_null_blank)
-    image = models.URLField(max_length=2048)
+    image = models.URLField(max_length=2048, **default_null_blank)
     short_url = models.CharField(
         verbose_name="Short URL", max_length=32, unique=True, **default_null_blank
     )
@@ -39,17 +39,23 @@ class Newsitem(CoreModel):
         return self.title
 
     def save(self, *args, **kwargs):
-        metaurl = MetaURL()
-        metaurl.url = self.url
-        metadata = metaurl.load()
-        if type(metadata) is django.http.response.JsonResponse:
-            self.title = self.url
-        else:
-            self.url = metadata.get("url", self.url)
-            self.domain = metaurl.domain
-            self.title = metadata.get("title", None)
-            self.description = metadata.get("description", None)
-            self.image = metadata.get("image", None)
+        if kwargs.get("preloaded", False):
+            metaurl = MetaURL()
+            metaurl.url = self.url
+            metadata = metaurl.load()
+
+            if type(metadata) is django.http.response.JsonResponse:
+                self.title = self.url
+            else:
+                siteurl = metadata.get("url", self.url)
+                self.url = siteurl
+                self.domain = metaurl.domain
+                self.title = metadata.get("title", siteurl)
+                self.description = metadata.get("description", None)
+                self.image = metadata.get("image", None)
+
+            kwargs.pop("preloaded")
+
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

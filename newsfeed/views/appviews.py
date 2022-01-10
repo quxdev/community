@@ -10,6 +10,9 @@ from django.views.generic import RedirectView
 from qux.seo.mixin import SEOMixin
 from ..forms import NewsitemForm
 from ..models import Newsitem
+from qux.utils.urls import MetaURL
+from django.http.response import JsonResponse
+from django.contrib.auth.models import User
 
 
 class NewsItemListView(SEOMixin, ListView):
@@ -17,13 +20,47 @@ class NewsItemListView(SEOMixin, ListView):
     queryset = Newsitem.objects.all()
     template_name = "newsfeed/list.html"
 
-    @staticmethod
-    def post(request):
+    def get_queryset(self):
+        creator = self.kwargs.get("creator", None)
+        if creator:
+            creator = User.objects.get(username__iexact=creator)
+        result = self.queryset.filter(creator=creator)
+        return result
+
+    def post(self, request, *args, **kwargs):
+        creator = self.kwargs.get("creator", None)
+        if creator:
+            creator = User.objects.get(username__iexact=creator)
+
         url = request.POST.get("url", None)
         if url:
-            Newsitem.objects.get_or_create(url=url)
+            metaurl = MetaURL()
+            metaurl.url = url
+            metadata = metaurl.load()
 
-        return redirect(reverse("newsfeed:list"))
+            if type(metadata) is JsonResponse:
+                siteurl = url
+            else:
+                siteurl = metadata.get("url", url)
+
+            n = Newsitem.objects.get_or_none(url=siteurl, creator=creator)
+
+            if n is None:
+                n = Newsitem()
+                n.url = siteurl
+                n.domain = metaurl.domain
+                n.title = metadata.get("title", None)
+                n.description = metadata.get("description", None)
+                n.image = metadata.get("image", None)
+                if request.user.is_authenticated and request.user == creator:
+                    n.creator = request.user
+
+                n.save(preloaded=True)
+
+        if creator:
+            return redirect(reverse("newsfeed:list_user", kwargs={"creator": creator}))
+        else:
+            return redirect(reverse("newsfeed:list"))
 
 
 class NewsAdminListView(SEOMixin, ListView):
@@ -37,7 +74,7 @@ class NewsItemCreateView(SEOMixin, CreateView):
     template_name = "newsfeed/create.html"
     extra_context = {
         "title": "<span>Newsitem</span>"
-        '<i class="fas fa-angle-right px-2"></i>'
+        '<i class="bi bi-chevron-right px-2"></i>'
         "<span>Add</span>"
     }
 
@@ -79,7 +116,7 @@ class NewsItemEditView(SEOMixin, UpdateView):
     template_name = "newsfeed/edit.html"
     extra_context = {
         "title": "<span>Newsitem</span>"
-        '<i class="fas fa-angle-right px-2"></i>'
+        '<i class="bi bi-chevron-right px-2"></i>'
         "<span>Edit</span>"
     }
 
