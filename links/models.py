@@ -28,6 +28,14 @@ OPENGRAPH_TYPES = (
             ("other", "Other"),
         ),
     ),
+    (
+        "File", (
+            ("file:pdf", "PDF"),
+            ("file:xls", "XLS"),
+            ("file:doc", "DOC"),
+            ("file:ppt", "PPT"),
+        )
+    )
 )
 
 
@@ -42,6 +50,7 @@ class Link(CoreModel):
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, **default_null_blank)
     url = models.URLField(verbose_name="URL", max_length=2048)
     url_hash = models.CharField(verbose_name="URL MD5 Hash", max_length=32)
+    orig_url = models.URLField(verbose_name="Original URL", **default_null_blank)
     domain = models.CharField(
         verbose_name="Domain", max_length=512, **default_null_blank
     )
@@ -67,26 +76,21 @@ class Link(CoreModel):
         return self.title
 
     def save(self, *args, **kwargs):
-        if not kwargs.get("preloaded", False):
+        metaurl = kwargs.get("metaurl", None)
+        if metaurl is None:
             metaurl = MetaURL()
             metaurl.url = self.url
             metadata = metaurl.load()
 
             if type(metadata) is django.http.response.JsonResponse:
                 self.title = self.url
-            else:
-                siteurl = metadata.get("url", self.url)
-                self.url = siteurl
-                self.domain = metaurl.domain
-                self.title = metadata.get("title", siteurl)
-                self.description = metadata.get("description", None)
-                self.type = metaurl.type
-                self.image = metadata.get("image", None)
 
-        self.url_hash = hashlib.md5(self.url.encode("utf-8")).hexdigest()
+        self.writeattr(metaurl)
 
-        if "preloaded" in kwargs:
-            kwargs.pop("preloaded")
+        if "metaurl" in kwargs:
+            kwargs.pop("metaurl")
+
+        print(self.__dict__)
 
         super().save(*args, **kwargs)
 
@@ -99,6 +103,22 @@ class Link(CoreModel):
 
     def count_comments(self):
         self.comments = self.comment_set.all().count()
+
+    def writeattr(self, metaurl: MetaURL = None):
+        if not isinstance(metaurl, MetaURL):
+            return
+
+        self.url = metaurl.url
+        if not self.orig_url:
+            self.orig_url = metaurl.orig_url
+        self.domain = metaurl.domain
+        self.type = metaurl.type
+        self.image = metaurl.image
+        self.title = metaurl.title
+        self.description = metaurl.description
+        if not self.description and self.orig_url:
+            self.description = self.orig_url
+        self.url_hash = hashlib.md5(self.url.encode("utf-8")).hexdigest()
 
 
 class Vote(CoreModel):
