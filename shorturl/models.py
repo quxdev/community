@@ -66,7 +66,7 @@ class Link(CoreModel):
 
         :return:
         """
-        characters = string.digits + string.ascii_letters
+        characters = string.ascii_letters
         short_url = "".join([random.choice(characters) for _ in range(6)])
 
         # short_url exists. Try again.

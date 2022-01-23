@@ -70,6 +70,9 @@ class LinkListView(SEOMixin, ListView):
     def post(request, *args, **kwargs):
         user = request.user if request.user.is_authenticated else None
 
+        if user is None:
+            return redirect(reverse("links:home"))
+
         url = request.POST.get("url", None)
         if url:
             metaurl = MetaURL()
@@ -78,6 +81,7 @@ class LinkListView(SEOMixin, ListView):
 
             if type(metadata) is JsonResponse:
                 siteurl = url
+                metadata = dict()
             else:
                 siteurl = metadata.get("url", url)
 
@@ -85,16 +89,8 @@ class LinkListView(SEOMixin, ListView):
 
             if n is None:
                 n = Link()
-                n.url = siteurl
-                n.domain = metaurl.domain
-                n.type = metadata.get("type", "website")
-                n.title = metadata.get("title", None)
-                n.description = metadata.get("description", None)
-                n.image = metadata.get("image", None)
-                if user:
-                    n.creator = user
-
-                n.save(preloaded=True)
+                n.creator = user
+                n.save(metaurl=metaurl)
 
         if user:
             return redirect(reverse("links:list", kwargs={"creator": user}))
